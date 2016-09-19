@@ -29,5 +29,5 @@ func main() {
 }
 
 func logReq(r *http.Request) {
-	log.Printf(`method=%s " path=%s fwd="%shost=%s`, r.Method, r.RequestURI, r.RemoteAddr, r.Host)
+	log.Printf(`method=%s path=%s fwd=%s host=%s`, r.Method, r.RequestURI, r.RemoteAddr, r.Host)
 }
