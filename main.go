@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 var (
@@ -18,12 +19,22 @@ func init() {
 }
 
 func main() {
-	//panic("fail")
 	flag.Parse()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		logReq(r)
+		w.Header().Add("Content-Type", "text/plain")
 		fmt.Fprintln(w, version)
+	})
+	mux.HandleFunc("/env", func(w http.ResponseWriter, r *http.Request) {
+		logReq(r)
+		w.Header().Add("Content-Type", "text/plain")
+		for _, env := range os.Environ() {
+			if _, err := fmt.Fprintln(w, env); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
 	})
 	log.Fatal(http.ListenAndServe(addr, mux))
 }
